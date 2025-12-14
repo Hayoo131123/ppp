@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe Game - Level System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            color: white;
+            text-align: center;
+        }
+        
+        .container {
+            background-color: rgba(0, 0, 0, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            max-width: 550px;
+            width: 100%;
+            margin: auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        header {
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fdbb2d, #b21f1f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        /* Level & XP System */
+        .level-system {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .level-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .level-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .level-text h3 {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .level-text p {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        
+        .xp-display {
+            text-align: right;
+        }
+        
+        .xp-text {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .xp-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .xp-bar-container {
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .xp-bar {
+            height: 100%;
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .xp-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #aaa;
+        }
+        
+        .ai-difficulty-display {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .difficulty-indicator {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        /* Achievement System */
+        .achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            animation: slideInRight 0.5s ease-out;
+            max-width: 300px;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .achievement-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .achievement-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .achievement-xp {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #FFEB3B;
+        }
+        
+        /* Game Modes */
+        .game-modes {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .mode-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        .mode-btn.active {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .pvp-btn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+        }
+        
+        .ai-btn {
+            background: linear-gradient(to right, #2196F3, #0D47A1);
+            color: white;
+        }
+        
+        /* Game Info */
+        .game-info {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .turn-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .player-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .player-x {
+            background-color: #ff4757;
+            color: white;
+        }
+        
+        .player-o {
+            background-color: #2ed573;
+            color: white;
+        }
+        
+        .scores-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .score-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 10px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .score-label {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        /* Game Board */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+            margin: 0 auto 20px;
+            width: 100%;
+            max-width: 320px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .cell {
+            aspect-ratio: 1/1;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cell:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+        
+        .cell.x {
+            color: #ff4757;
+        }
+        
+        .cell.o {
+            color: #2ed573;
+        }
+        
+        .cell.hint {
+            background-color: rgba(255, 215, 0, 0.3);
+            animation: hintPulse 1.5s infinite;
+        }
+        
+        .cell.winning-cell {
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes hintPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+        
+        .ai-difficulty {
+            margin-top: 12px;
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .ai-difficulty.active {
+            display: flex;
+        }
+        
+        .difficulty-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #2196F3;
+            font-weight: bold;
+        }
+        
+        .game-status {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            min-height: 30px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .status-win {
+            background-color: rgba(46, 213, 115, 0.3);
+            color: #2ed573;
+        }
+        
+        .status-draw {
+            background-color: rgba(255, 165, 0, 0.3);
+            color: #FFA500;
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 120px;
+            justify-content: center;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(to right, #FF9800, #F57C00);
+            color: white;
+        }
+        
+        .reset-score-btn {
+            background: linear-gradient(to right, #9C27B0, #7B1FA2);
+            color: white;
+        }
+        
+        .hint-btn {
+            background: linear-gradient(to right, #FFC107, #FF9800);
+            color: white;
+        }
+        
+        .undo-btn {
+            background: linear-gradient(to right, #607D8B, #455A64);
+            color: white;
+        }
+        
+        .redo-btn {
+            background: linear-gradient(to right, #795548, #5D4037);
+            color: white;
+        }
+        
+        .control-btn:active {
+            transform: translateY(2px);
+        }
+        
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .history-info {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #aaa;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .history-count {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        .install-hint {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+        
+        footer {
+            margin-top: 20px;
+            color: #aaa;
+            font-size: 0.8rem;
+            padding: 0 10px;
+        }
+        
+        /* Level Up Animation */
+        .level-up-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .level-up-content {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            animation: popIn 0.5s ease-out;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .level-up-icon {
+            font-size: 4rem;
+            color: #FFD700;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .level-up-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .level-up-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .new-feature {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .game-board {
+                max-width: 280px;
+                padding: 12px;
+            }
+            
+            .cell {
+                font-size: 2.5rem;
+            }
+            
+            .mode-btn, .control-btn {
+                min-width: 110px;
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .score-value {
+                font-size: 1.6rem;
+            }
+            
+            .player-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.6rem;
+            }
+            
+            .controls {
+                gap: 8px;
+            }
+            
+            .level-badge {
+                width: 40px;
+                height: 40px;
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                padding: 25px;
+                max-width: 650px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .game-board {
+                max-width: 400px;
+            }
+            
+            .cell {
+                font-size: 3.5rem;
+            }
+            
+            .cell:hover {
+                transform: scale(1.05);
+            }
+            
+            .control-btn:hover:not(:disabled), .mode-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            }
+            
+            .control-btn {
+                min-width: 140px;
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Achievement Notification -->
+    <div class="achievement-notification" id="achievementNotification">
+        <div class="achievement-icon" id="achievementIcon">🏆</div>
+        <div class="achievement-title" id="achievementTitle">Achievement Unlocked!</div>
+        <div class="achievement-desc" id="achievementDesc">Description of achievement</div>
+        <div class="achievement-xp" id="achievementXP">+50 XP</div>
+    </div>
+    
+    <!-- Level Up Animation -->
+    <div class="level-up-animation" id="levelUpAnimation">
+        <div class="level-up-content">
+            <div class="level-up-icon">🎮</div>
+            <div class="level-up-title">LEVEL UP!</div>
+            <div class="level-up-text">Anda telah mencapai level <span id="newLevel">1</span></div>
+            <div class="new-feature" id="newFeature">AI menjadi lebih sulit!</div>
+            <button class="control-btn" onclick="closeLevelUp()" style="margin-top: 20px; background: linear-gradient(to right, #4CAF50, #2E7D32);">
+                <i class="fas fa-check"></i> Lanjutkan Bermain
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> TIC TAC TOE</h1>
+            <p class="subtitle">Mainkan game klasik dengan sistem Level & Achievement</p>
+        </header>
+        
+        <!-- Level & XP System -->
+        <div class="level-system">
+            <div class="level-info">
+                <div class="level-display">
+                    <div class="level-badge" id="levelBadge">1</div>
+                    <div class="level-text">
+                        <h3>Level <span id="levelText">1</span></h3>
+                        <p id="levelDesc">Pemula</p>
+                    </div>
+                </div>
+                <div class="xp-display">
+                    <div class="xp-text">XP</div>
+                    <div class="xp-amount"><span id="currentXP">0</span>/<span id="maxXP">100</span></div>
+                </div>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-bar" id="xpBar"></div>
+            </div>
+            <div class="xp-info">
+                <span>XP saat ini: <span id="xpCurrent">0</span></span>
+                <span>XP dibutuhkan: <span id="xpNeeded">100</span></span>
+            </div>
+            <div class="ai-difficulty-display">
+                <i class="fas fa-robot"></i> Tingkat kesulitan AI: <span class="difficulty-indicator" id="aiDifficultyDisplay">Sedang</span>
+            </div>
+        </div>
+        
+        <div class="game-modes">
+            <button class="mode-btn pvp-btn active" id="pvp-mode">
+                <i class="fas fa-users"></i> Dua Pemain
+            </button>
+            <button class="mode-btn ai-btn" id="ai-mode">
+                <i class="fas fa-robot"></i> Lawan AI
+            </button>
+        </div>
+        
+        <div class="ai-difficulty" id="ai-difficulty">
+            <button class="difficulty-btn active" data-difficulty="easy">Mudah</button>
+            <button class="difficulty-btn" data-difficulty="medium">Sedang</button>
+            <button class="difficulty-btn" data-difficulty="hard">Sulit</button>
+        </div>
+        
+        <div class="game-info">
+            <div class="turn-container">
+                <span>Giliran:</span>
+                <div class="player-icon player-x" id="current-player">X</div>
+            </div>
+            
+            <div class="scores-container">
+                <div class="score-box">
+                    <div class="score-label">Pemain X</div>
+                    <div class="score-value" id="score-x">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">Seri</div>
+                    <div class="score-value" id="score-draw">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">Pemain O</div>
+                    <div class="score-value" id="score-o">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-board" id="game-board">
+            <!-- Sel-sel papan permainan akan dibuat dengan JavaScript -->
+        </div>
+        
+        <div class="game-status" id="game-status">
+            Permainan dimulai! Giliran X.
+        </div>
+        
+        <div class="history-info">
+            <div class="history-count">
+                <i class="fas fa-history"></i> Langkah: <span id="move-count">0</span>
+            </div>
+            <div class="history-count">
+                <i class="fas fa-lightbulb"></i> Hint: <span id="hint-count">3</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn hint-btn" id="hint-btn">
+                <i class="fas fa-lightbulb"></i> Hint
+            </button>
+            <button class="control-btn undo-btn" id="undo-btn" disabled>
+                <i class="fas fa-undo"></i> Undo
+            </button>
+            <button class="control-btn redo-btn" id="redo-btn" disabled>
+                <i class="fas fa-redo"></i> Redo
+            </button>
+            <button class="control-btn restart-btn" id="restart-btn">
+                <i class="fas fa-redo"></i> Restart
+            </button>
+            <button class="control-btn reset-score-btn" id="reset-score-btn">
+                <i class="fas fa-trash-alt"></i> Reset
+            </button>
+        </div>
+        
+        <div class="install-hint">
+            <p><i class="fas fa-info-circle"></i> <strong>Sistem Level:</strong> Dapatkan XP dengan menang/lawan AI. Semakin tinggi level, semakin sulit AI!</p>
+        </div>
+        
+        <footer>
+            <p>Game Tic Tac Toe | Sistem Level & Achievement | AI semakin sulit di level tinggi</p>
+        </footer>
+    </div>
+
+    <script>
+        // ==================== LEVEL & XP SYSTEM ====================
+        const levelSystem = {
+            // Data level
+            level: 1,
+            xp: 0,
+            maxXP: 100,
+            
+            // Level descriptions
+            levelDescriptions: {
+                1: "Pemula",
+                2: "Pemain Baru",
+                3: "Pemain Menengah",
+                4: "Pemain Mahir", 
+                5: "Ahli",
+                6: "Master",
+                7: "Grand Master",
+                8: "Legenda",
+                9: "Mitos",
+                10: "Dewa Tic Tac Toe"
+            },
+            
+            // XP requirements per level (formula: 100 * level^1.5)
+            xpRequirements: {
+                1: 100,
+                2: 283,
+                3: 520,
+                4: 800,
+                5: 1118,
+                6: 1469,
+                7: 1852,
+                8: 2263,
+                9: 2700,
+                10: 3162
+            },
+            
+            // AI difficulty based on level
+            aiDifficultyByLevel: {
+                1: "easy",
+                2: "easy",
+                3: "medium",
+                4: "medium",
+                5: "hard",
+                6: "hard",
+                7: "hard",
+                8: "hard",
+                9: "hard",
+                10: "hard"
+            },
+            
+            // Initialize from localStorage
+            init() {
+                const savedLevel = localStorage.getItem('ticTacToe_level');
+                const savedXP = localStorage.getItem('ticTacToe_xp');
+                
+                if (savedLevel) this.level = parseInt(savedLevel);
+                if (savedXP) this.xp = parseInt(savedXP);
+                
+                this.maxXP = this.xpRequirements[this.level] || 100;
+                this.updateDisplay();
+            },
+            
+            // Add XP
+            addXP(amount, reason = "") {
+                const oldLevel = this.level;
+                this.xp += amount;
+                
+                // Check for level up
+                while (this.xp >= this.maxXP && this.level < 10) {
+                    this.xp -= this.maxXP;
+                    this.level++;
+                    this.maxXP = this.xpRequirements[this.level];
+                    this.showLevelUp(oldLevel);
+                }
+                
+                // Cap at level 10
+                if (this.level >= 10 && this.xp > this.maxXP) {
+                    this.xp = this.maxXP;
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('ticTacToe_level', this.level);
+                localStorage.setItem('ticTacToe_xp', this.xp);
+                
+                this.updateDisplay();
+                
+                // Show XP notification if not level up
+                if (oldLevel === this.level && reason) {
+                    this.showXPGain(amount, reason);
+                }
+                
+                // Update AI difficulty
+                this.updateAIDifficulty();
+            },
+            
+            // Update AI difficulty based on level
+            updateAIDifficulty() {
+                const difficulty = this.aiDifficultyByLevel[this.level] || "medium";
+                aiDifficulty = difficulty;
+                
+                // Update UI
+                document.getElementById('aiDifficultyDisplay').textContent = 
+                    difficulty === "easy" ? "Mudah" : 
+                    difficulty === "medium" ? "Sedang" : "Sulit";
+                
+                // Update active difficulty button
+                document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                    if (btn.dataset.difficulty === difficulty) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // Update game status if in AI mode
+                if (gameMode === 'ai') {
+                    updateGameStatus(`Level ${this.level}: AI ${difficulty === "easy" ? "Mudah" : difficulty === "medium" ? "Sedang" : "Sulit"}. Giliran ${currentPlayer}.`);
+                }
+            },
+            
+            // Show level up animation
+            showLevelUp(oldLevel) {
+                const newFeatures = [
+                    "AI menjadi lebih sulit!",
+                    "Hint tambahan tersedia!",
+                    "Animasi kemenangan baru!",
+                    "Warna papan berubah!",
+                    "Efek suara ditambahkan!",
+                    "Achievement baru terbuka!",
+                    "Mode tantangan tersedia!",
+                    "Skin karakter baru!",
+                    "Statistik detail tersedia!",
+                    "Anda telah menjadi Dewa Tic Tac Toe!"
+                ];
+                
+                document.getElementById('newLevel').textContent = this.level;
+                document.getElementById('newFeature').textContent = newFeatures[this.level - 1] || "Fitur baru tersedia!";
+                
+                // Show animation
+                document.getElementById('levelUpAnimation').style.display = 'flex';
+                
+                // Play sound if available
+                if (typeof Audio !== 'undefined') {
+                    try {
+                        const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
+                        audio.play().catch(() => {});
+                    } catch (e) {}
+                }
+                
+                // Unlock achievement
+                achievements.unlock(`level_${this.level}`, `Mencapai Level ${this.level}`);
+            },
+            
+            // Close level up animation
+            closeLevelUp() {
+                document.getElementById('levelUpAnimation').style.display = 'none';
+            },
+            
+            // Show XP gain notification
+            showXPGain(amount, reason) {
+                gameStatusElement.textContent = `+${amount} XP! ${reason}`;
+                gameStatusElement.style.backgroundColor = 'rgba(76, 175, 80, 0.3)';
+                gameStatusElement.style.color = '#4CAF50';
+                
+                setTimeout(() => {
+                    updateGameStatus(`Giliran ${currentPlayer}.`);
+                }, 2000);
+            },
+            
+            // Update display
+            updateDisplay() {
+                document.getElementById('levelBadge').textContent = this.level;
+                document.getElementById('levelText').textContent = this.level;
+                document.getElementById('levelDesc').textContent = this.levelDescriptions[this.level] || "Pemain";
+                document.getElementById('currentXP').textContent = this.xp;
+                document.getElementById('maxXP').textContent = this.maxXP;
+                document.getElementById('xpCurrent').textContent = this.xp;
+                document.getElementById('xpNeeded').textContent = this.maxXP;
+                
+                // Update XP bar
+                const xpPercent = (this.xp / this.maxXP) * 100;
+                document.getElementById('xpBar').style.width = `${xpPercent}%`;
+            },
+            
+            // Reset level and XP
+            reset() {
+                this.level = 1;
+                this.xp = 0;
+                this.maxXP = this.xpRequirements[1];
+                localStorage.removeItem('ticTacToe_level');
+                localStorage.removeItem('ticTacToe_xp');
+                this.updateDisplay();
+                this.updateAIDifficulty();
+            }
+        };
+        
+        // ==================== ACHIEVEMENT SYSTEM ====================
+        const achievements = {
+            // Achievement definitions
+            list: {
+                first_win: {
+                    title: "Pemenang Pertama",
+                    description: "Menang game pertama kali",
+                    icon: "🥇",
+                    xp: 50,
+                    unlocked: false
+                },
+                undo_master: {
+                    title: "Master Undo",
+                    description: "Gunakan undo 10 kali dalam satu game",
+                    icon: "↩️",
+                    xp: 30,
+                    unlocked: false
+                },
+                hint_saver: {
+                    title: "Penghemat Hint",
+                    description: "Menang tanpa menggunakan hint",
+                    icon: "💡",
+                    xp: 40,
+                    unlocked: false
+                },
+                perfect_win: {
+                    title: "Kemenangan Sempurna",
+                    description: "Menang dalam 5 langkah atau kurang",
+                    icon: "⭐",
+                    xp: 60,
+                    unlocked: false
+                },
+                comeback_king: {
+                    title: "Raja Comeback",
+                    description: "Menang setelah ketinggalan 2 langkah",
+                    icon: "👑",
+                    xp: 70,
+                    unlocked: false
+                },
+                level_3: {
+                    title: "Pemain Menengah",
+                    description: "Mencapai Level 3",
+                    icon: "📈",
+                    xp: 100,
+                    unlocked: false
+                },
+                level_5: {
+                    title: "Ahli Tic Tac Toe",
+                    description: "Mencapai Level 5",
+                    icon: "🏆",
+                    xp: 200,
+                    unlocked: false
+                },
+                level_10: {
+                    title: "Dewa Tic Tac Toe",
+                    description: "Mencapai Level 10",
+                    icon: "⚡",
+                    xp: 500,
+                    unlocked: false
+                },
+                win_streak: {
+                    title: "Streak Menang",
+                    description: "Menang 3 game berturut-turut",
+                    icon: "🔥",
+                    xp: 80,
+                    unlocked: false
+                }
+            },
+            
+            // Game stats for achievements
+            stats: {
+                undoCount: 0,
+                hintUsed: false,
+                movesToWin: 0,
+                comebackWins: 0,
+                winStreak: 0
+            },
+            
+            // Initialize from localStorage
+            init() {
+                const savedAchievements = localStorage.getItem('ticTacToe_achievements');
+                if (savedAchievements) {
+                    const unlocked = JSON.parse(savedAchievements);
+                    Object.keys(unlocked).forEach(id => {
+                        if (this.list[id]) {
+                            this.list[id].unlocked = true;
+                        }
+                    });
+                }
+                
+                const savedStats = localStorage.getItem('ticTacToe_stats');
+                if (savedStats) {
+                    this.stats = {...this.stats, ...JSON.parse(savedStats)};
+                }
+            },
+            
+            // Unlock achievement
+            unlock(id, reason = "") {
+                if (!this.list[id] || this.list[id].unlocked) return;
+                
+                this.list[id].unlocked = true;
+                
+                // Show notification
+                this.showNotification(id, reason);
+                
+                // Add XP
+                levelSystem.addXP(this.list[id].xp, reason);
+                
+                // Save to localStorage
+                this.save();
+            },
+            
+            // Show achievement notification
+            showNotification(id, reason) {
+                const achievement = this.list[id];
+                
+                document.getElementById('achievementIcon').textContent = achievement.icon;
+                document.getElementById('achievementTitle').textContent = achievement.title;
+                document.getElementById('achievementDesc').textContent = achievement.description;
+                document.getElementById('achievementXP').textContent = `+${achievement.xp} XP`;
+                
+                const notification = document.getElementById('achievementNotification');
+                notification.style.display = 'block';
+                
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 5000);
+            },
+            
+            // Update stats
+            updateStat(stat, value) {
+                this.stats[stat] = value;
+                this.saveStats();
+                
+                // Check for achievements based on stats
+                this.checkStats();
+            },
+            
+            // Check for achievement triggers
+            checkStats() {
+                // Undo master
+                if (this.stats.undoCount >= 10 && !this.list.undo_master.unlocked) {
+                    this.unlock('undo_master', 'Menggunakan undo 10 kali!');
+                }
+                
+                // Win streak
+                if (this.stats.winStreak >= 3 && !this.list.win_streak.unlocked) {
+                    this.unlock('win_streak', 'Menang 3x berturut-turut!');
+                }
+            },
+            
+            // Reset game stats (not achievements)
+            resetGameStats() {
+                this.stats = {
+                    undoCount: 0,
+                    hintUsed: false,
+                    movesToWin: 0,
+                    comebackWins: 0,
+                    winStreak: 0
+                };
+                this.saveStats();
+            },
+            
+            // Save to localStorage
+            save() {
+                const unlocked = {};
+                Object.keys(this.list).forEach(id => {
+                    if (this.list[id].unlocked) {
+                        unlocked[id] = true;
+                    }
+                });
+                localStorage.setItem('ticTacToe_achievements', JSON.stringify(unlocked));
+            },
+            
+            // Save stats to localStorage
+            saveStats() {
+                localStorage.setItem('ticTacToe_stats', JSON.stringify(this.stats));
+            },
+            
+            // Reset all achievements
+            reset() {
+                Object.keys(this.list).forEach(id => {
+                    this.list[id].unlocked = false;
+                });
+                this.resetGameStats();
+                localStorage.removeItem('ticTacToe_achievements');
+                localStorage.removeItem('ticTacToe_stats');
+            }
+        };
+        
+        // ==================== GAME LOGIC ====================
+        
+        // Elemen DOM
+        const gameBoard = document.getElementById('game-board');
+        const currentPlayerElement = document.getElementById('current-player');
+        const gameStatusElement = document.getElementById('game-status');
+        const scoreXElement = document.getElementById('score-x');
+        const scoreOElement = document.getElementById('score-o');
+        const scoreDrawElement = document.getElementById('score-draw');
+        const moveCountElement = document.getElementById('move-count');
+        const hintCountElement = document.getElementById('hint-count');
+        const pvpModeBtn = document.getElementById('pvp-mode');
+        const aiModeBtn = document.getElementById('ai-mode');
+        const aiDifficultyElement = document.getElementById('ai-difficulty');
+        const restartBtn = document.getElementById('restart-btn');
+        const resetScoreBtn = document.getElementById('reset-score-btn');
+        const hintBtn = document.getElementById('hint-btn');
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        
+        // Variabel game
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let gameMode = 'pvp'; // 'pvp' atau 'ai'
+        let aiDifficulty = 'medium'; // 'easy', 'medium', 'hard'
+        let scores = {
+            'X': 0,
+            'O': 0,
+            'draw': 0
+        };
+        
+        // Variabel untuk history (undo/redo)
+        let moveHistory = []; // Menyimpan history langkah
+        let historyIndex = -1; // Index saat ini di history
+        let moveCount = 0; // Jumlah langkah yang telah dilakukan
+        
+        // Variabel untuk hint
+        let hintRemaining = 3; // Jumlah hint yang tersisa
+        let hintActive = false; // Status hint aktif
+        
+        // Pola kemenangan
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Baris
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Kolom
+            [0, 4, 8], [2, 4, 6]             // Diagonal
+        ];
+        
+        // Inisialisasi papan permainan
+        function initializeBoard() {
+            gameBoard.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', () => handleCellClick(i));
+                gameBoard.appendChild(cell);
+            }
+            
+            updateGameStatus("Permainan dimulai! Giliran X.");
+            updatePlayerTurn();
+            updateHistoryInfo();
+        }
+        
+        // Memperbarui giliran pemain
+        function updatePlayerTurn() {
+            currentPlayerElement.textContent = currentPlayer;
+            currentPlayerElement.className = `player-icon ${currentPlayer === 'X' ? 'player-x' : 'player-o'}`;
+        }
+        
+        // Memperbarui status permainan
+        function updateGameStatus(message, isWin = false, isDraw = false) {
+            gameStatusElement.textContent = message;
+            
+            // Reset kelas status
+            gameStatusElement.classList.remove('status-win', 'status-draw');
+            
+            if (isWin) {
+                gameStatusElement.classList.add('status-win');
+            } else if (isDraw) {
+                gameStatusElement.classList.add('status-draw');
+            }
+        }
+        
+        // Memperbarui informasi history
+        function updateHistoryInfo() {
+            moveCountElement.textContent = moveCount;
+            hintCountElement.textContent = hintRemaining;
+            
+            // Update status tombol undo/redo
+            undoBtn.disabled = historyIndex < 0;
+            redoBtn.disabled = historyIndex >= moveHistory.length - 1;
+            
+            // Update status tombol hint
+            hintBtn.disabled = hintRemaining <= 0 || !gameActive || gameMode === 'ai' && currentPlayer === 'O';
+        }
+        
+        // Menyimpan state game ke history
+        function saveToHistory() {
+            // Hapus redo history jika kita tidak di akhir history
+            if (historyIndex < moveHistory.length - 1) {
+                moveHistory = moveHistory.slice(0, historyIndex + 1);
+            }
+            
+            // Simpan state saat ini
+            moveHistory.push({
+                board: [...board],
+                currentPlayer: currentPlayer,
+                moveCount: moveCount
+            });
+            
+            historyIndex++;
+            updateHistoryInfo();
+        }
+        
+        // Menangani klik pada sel
+        function handleCellClick(index) {
+            // Cek apakah sel sudah terisi atau game tidak aktif
+            if (board[index] !== '' || !gameActive) {
+                return;
+            }
+            
+            // Nonaktifkan hint jika sedang aktif
+            if (hintActive) {
+                disableHint();
+            }
+            
+            // Simpan state sebelum langkah
+            saveToHistory();
+            
+            // Lakukan langkah pemain
+            makeMove(index, currentPlayer);
+            moveCount++;
+            
+            // Cek apakah ada pemenang
+            const winningResult = checkWinner();
+            
+            if (winningResult.winner) {
+                // Ada pemenang
+                gameActive = false;
+                scores[winningResult.winner]++;
+                updateScores();
+                
+                // Tampilkan animasi sel yang menang
+                winningResult.combination.forEach(index => {
+                    const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                    cell.classList.add('winning-cell');
+                });
+                
+                updateGameStatus(`Pemain ${winningResult.winner} menang!`, true);
+                updateHistoryInfo();
+                
+                // Award XP based on game mode and difficulty
+                awardXPForWin(winningResult.winner);
+                
+            } else if (isBoardFull()) {
+                // Seri
+                gameActive = false;
+                scores['draw']++;
+                updateScores();
+                updateGameStatus("Permainan seri!", false, true);
+                updateHistoryInfo();
+                
+                // Award XP for draw
+                awardXPForDraw();
+            } else {
+                // Ganti giliran
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updatePlayerTurn();
+                updateGameStatus(`Giliran ${currentPlayer}.`);
+                
+                // Jika mode AI dan giliran AI
+                if (gameMode === 'ai' && currentPlayer === 'O' && gameActive) {
+                    setTimeout(() => makeAIMove(), 500);
+                }
+            }
+        }
+        
+        // Award XP for winning
+        function awardXPForWin(winner) {
+            if (gameMode === 'pvp') {
+                // PvP mode - both players get XP
+                levelSystem.addXP(25, "Menang dalam mode PvP!");
+                if (!achievements.list.first_win.unlocked) {
+                    achievements.unlock('first_win', 'Kemenangan pertama!');
+                }
+            } else {
+                // AI mode - more XP for higher difficulty
+                let xpAmount = 0;
+                let reason = "";
+                
+                switch(aiDifficulty) {
+                    case 'easy':
+                        xpAmount = 20;
+                        reason = "Mengalahkan AI Mudah!";
+                        break;
+                    case 'medium':
+                        xpAmount = 40;
+                        reason = "Mengalahkan AI Sedang!";
+                        break;
+                    case 'hard':
+                        xpAmount = 60;
+                        reason = "Mengalahkan AI Sulit!";
+                        break;
+                }
+                
+                // Bonus for quick win
+                if (moveCount <= 5) {
+                    xpAmount += 20;
+                    reason += " (Kemenangan cepat!)";
+                    achievements.unlock('perfect_win', 'Menang dalam 5 langkah!');
+                }
+                
+                levelSystem.addXP(xpAmount, reason);
+                
+                // Check for comeback win
+                if (moveCount > 5 && winner === 'X') {
+                    achievements.stats.comebackWins++;
+                    if (achievements.stats.comebackWins >= 1) {
+                        achievements.unlock('comeback_king', 'Comeback menang!');
+                    }
+                }
+                
+                // Update win streak
+                achievements.stats.winStreak++;
+                achievements.saveStats();
+                achievements.checkStats();
+            }
+        }
+        
+        // Award XP for draw
+        function awardXPForDraw() {
+            if (gameMode === 'pvp') {
+                levelSystem.addXP(10, "Seri dalam mode PvP!");
+            } else {
+                let xpAmount = 0;
+                switch(aiDifficulty) {
+                    case 'easy': xpAmount = 5; break;
+                    case 'medium': xpAmount = 15; break;
+                    case 'hard': xpAmount = 30; break;
+                }
+                levelSystem.addXP(xpAmount, "Seri melawan AI!");
+                
+                // Reset win streak on draw
+                achievements.stats.winStreak = 0;
+                achievements.saveStats();
+            }
+        }
+        
+        // Melakukan langkah
+        function makeMove(index, player) {
+            board[index] = player;
+            const cell = document.querySelector(`.cell[data-index="${index}"]`);
+            cell.classList.add(player.toLowerCase());
+            cell.textContent = player;
+        }
+        
+        // Membuat langkah AI dengan tingkat kesulitan berdasarkan level
+        function makeAIMove() {
+            if (!gameActive) return;
+            
+            // Simpan state sebelum langkah AI
+            saveToHistory();
+            
+            let index;
+            
+            // AI behavior based on difficulty and level
+            const level = levelSystem.level;
+            
+            // Advanced AI for higher levels
+            if (level >= 7 && aiDifficulty === 'hard') {
+                // Expert AI with look-ahead
+                index = getExpertAIMove();
+            } else {
+                // Normal AI based on difficulty
+                switch(aiDifficulty) {
+                    case 'easy':
+                        // Easy AI - 80% random, 20% optimal
+                        index = Math.random() < 0.8 ? getRandomMove() : getOptimalMove();
+                        break;
+                    case 'medium':
+                        // Medium AI - 50% optimal, 50% random
+                        index = Math.random() < 0.5 ? getOptimalMove() : getRandomMove();
+                        break;
+                    case 'hard':
+                        // Hard AI - 90% optimal, 10% random
+                        index = Math.random() < 0.9 ? getOptimalMove() : getRandomMove();
+                        break;
+                    default:
+                        index = getRandomMove();
+                }
+            }
+            
+            if (index !== -1) {
+                makeMove(index, 'O');
+                moveCount++;
+                
+                // Cek apakah AI menang
+                const winningResult = checkWinner();
+                
+                if (winningResult.winner) {
+                    gameActive = false;
+                    scores[winningResult.winner]++;
+                    updateScores();
+                    
+                    // Tampilkan animasi sel yang menang
+                    winningResult.combination.forEach(index => {
+                        const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                        cell.classList.add('winning-cell');
+                    });
+                    
+                    updateGameStatus(`Pemain ${winningResult.winner} menang!`, true);
+                    updateHistoryInfo();
+                    
+                    // Reset win streak when AI wins
+                    achievements.stats.winStreak = 0;
+                    achievements.saveStats();
+                    
+                } else if (isBoardFull()) {
+                    gameActive = false;
+                    scores['draw']++;
+                    updateScores();
+                    updateGameStatus("Permainan seri!", false, true);
+                    updateHistoryInfo();
+                } else {
+                    currentPlayer = 'X';
+                    updatePlayerTurn();
+                    updateGameStatus(`Giliran ${currentPlayer}.`);
+                    updateHistoryInfo();
+                }
+            }
+        }
+        
+        // Expert AI with 2-step lookahead
+        function getExpertAIMove() {
+            // Try to win
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    if (checkWinner().winner === 'O') {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Block opponent win
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'X';
+                    if (checkWinner().winner === 'X') {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Try to create fork (two winning opportunities)
+            const forkMove = findForkMove('O');
+            if (forkMove !== -1) return forkMove;
+            
+            // Block opponent fork
+            const blockForkMove = findForkMove('X');
+            if (blockForkMove !== -1) return blockForkMove;
+            
+            // Center
+            if (board[4] === '') return 4;
+            
+            // Opposite corner if opponent in corner
+            const corners = [0, 2, 6, 8];
+            const oppositeCorners = {0:8, 2:6, 6:2, 8:0};
+            
+            for (const corner of corners) {
+                if (board[corner] === 'X' && board[oppositeCorners[corner]] === '') {
+                    return oppositeCorners[corner];
+                }
+            }
+            
+            // Empty corner
+            const emptyCorners = corners.filter(index => board[index] === '');
+            if (emptyCorners.length > 0) {
+                return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
+            }
+            
+            // Empty side
+            const sides = [1, 3, 5, 7];
+            const emptySides = sides.filter(index => board[index] === '');
+            if (emptySides.length > 0) {
+                return emptySides[Math.floor(Math.random() * emptySides.length)];
+            }
+            
+            return getRandomMove();
+        }
+        
+        // Find fork move (creating two winning opportunities)
+        function findForkMove(player) {
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = player;
+                    
+                    // Count winning opportunities
+                    let winCount = 0;
+                    for (let condition of winningConditions) {
+                        const [a, b, c] = condition;
+                        const cells = [board[a], board[b], board[c]];
+                        const emptyCount = cells.filter(cell => cell === '').length;
+                        const playerCount = cells.filter(cell => cell === player).length;
+                        
+                        if (playerCount === 2 && emptyCount === 1) {
+                            winCount++;
+                        }
+                    }
+                    
+                    board[i] = '';
+                    
+                    if (winCount >= 2) {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+        
+        // Mendapatkan langkah acak
+        function getRandomMove() {
+            const emptyCells = board
+                .map((cell, index) => cell === '' ? index : null)
+                .filter(index => index !== null);
+            
+            if (emptyCells.length === 0) return -1;
+            
+            return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        }
+        
+        // Mendapatkan langkah optimal (minimax sederhana)
+        function getOptimalMove() {
+            // Coba cari langkah yang bisa menang
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    if (checkWinner().winner === 'O') {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Coba blokir langkah lawan yang bisa menang
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'X';
+                    if (checkWinner().winner === 'X') {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Prioritas sel tengah
+            if (board[4] === '') return 4;
+            
+            // Prioritas sudut
+            const corners = [0, 2, 6, 8];
+            const emptyCorners = corners.filter(index => board[index] === '');
+            if (emptyCorners.length > 0) {
+                return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
+            }
+            
+            // Langkah acak
+            return getRandomMove();
+        }
+        
+        // Mendapatkan langkah hint (petunjuk)
+        function getHintMove() {
+            // Jika ada langkah yang bisa menang, pilih itu
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = currentPlayer;
+                    if (checkWinner().winner === currentPlayer) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Jika lawan bisa menang, blokir
+            const opponent = currentPlayer === 'X' ? 'O' : 'X';
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = opponent;
+                    if (checkWinner().winner === opponent) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Prioritas tengah
+            if (board[4] === '') return 4;
+            
+            // Prioritas sudut
+            const corners = [0, 2, 6, 8];
+            const emptyCorners = corners.filter(index => board[index] === '');
+            if (emptyCorners.length > 0) {
+                return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
+            }
+            
+            // Langkah acak
+            return getRandomMove();
+        }
+        
+        // Menampilkan hint
+        function showHint() {
+            if (hintRemaining <= 0 || !gameActive) return;
+            
+            // Jika hint sudah aktif, matikan
+            if (hintActive) {
+                disableHint();
+                return;
+            }
+            
+            // Update achievement stat
+            achievements.updateStat('hintUsed', true);
+            
+            // Dapatkan langkah hint
+            const hintIndex = getHintMove();
+            if (hintIndex === -1) return;
+            
+            // Tandai sel dengan hint
+            const cell = document.querySelector(`.cell[data-index="${hintIndex}"]`);
+            cell.classList.add('hint');
+            hintActive = true;
+            
+            // Kurangi hint yang tersisa
+            hintRemaining--;
+            updateHistoryInfo();
+            
+            // Auto disable hint setelah 3 detik
+            setTimeout(disableHint, 3000);
+        }
+        
+        // Menonaktifkan hint
+        function disableHint() {
+            if (!hintActive) return;
+            
+            // Hapus kelas hint dari semua sel
+            document.querySelectorAll('.cell.hint').forEach(cell => {
+                cell.classList.remove('hint');
+            });
+            
+            hintActive = false;
+        }
+        
+        // Undo langkah terakhir
+        function undoMove() {
+            if (historyIndex < 0) return;
+            
+            // Nonaktifkan hint jika sedang aktif
+            if (hintActive) {
+                disableHint();
+            }
+            
+            // Update achievement stat
+            achievements.stats.undoCount++;
+            achievements.saveStats();
+            
+            // Kembali ke state sebelumnya
+            historyIndex--;
+            const prevState = moveHistory[historyIndex];
+            
+            // Restore state
+            board = [...prevState.board];
+            currentPlayer = prevState.currentPlayer;
+            moveCount = prevState.moveCount;
+            gameActive = true;
+            
+            // Update tampilan papan
+            updateBoardDisplay();
+            updatePlayerTurn();
+            updateGameStatus(`Undo dilakukan. Giliran ${currentPlayer}.`);
+            updateHistoryInfo();
+        }
+        
+        // Redo langkah yang di-undo
+        function redoMove() {
+            if (historyIndex >= moveHistory.length - 1) return;
+            
+            // Nonaktifkan hint jika sedang aktif
+            if (hintActive) {
+                disableHint();
+            }
+            
+            // Maju ke state berikutnya
+            historyIndex++;
+            const nextState = moveHistory[historyIndex];
+            
+            // Restore state
+            board = [...nextState.board];
+            currentPlayer = nextState.currentPlayer;
+            moveCount = nextState.moveCount;
+            gameActive = true;
+            
+            // Update tampilan papan
+            updateBoardDisplay();
+            updatePlayerTurn();
+            updateGameStatus(`Redo dilakukan. Giliran ${currentPlayer}.`);
+            updateHistoryInfo();
+        }
+        
+        // Update tampilan papan dari state board
+        function updateBoardDisplay() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                cell.className = 'cell';
+                cell.textContent = '';
+                
+                if (board[index] === 'X') {
+                    cell.classList.add('x');
+                    cell.textContent = 'X';
+                } else if (board[index] === 'O') {
+                    cell.classList.add('o');
+                    cell.textContent = 'O';
+                }
+                
+                // Hapus kelas winning-cell
+                cell.classList.remove('winning-cell');
+            });
+            
+            // Cek apakah ada pemenang setelah undo/redo
+            const winningResult = checkWinner();
+            if (winningResult.winner) {
+                gameActive = false;
+                winningResult.combination.forEach(index => {
+                    const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                    cell.classList.add('winning-cell');
+                });
+                updateGameStatus(`Pemain ${winningResult.winner} menang!`, true);
+            } else if (isBoardFull()) {
+                gameActive = false;
+                updateGameStatus("Permainan seri!", false, true);
+            }
+        }
+        
+        // Memeriksa pemenang
+        function checkWinner() {
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return {
+                        winner: board[a],
+                        combination: condition
+                    };
+                }
+            }
+            
+            return { winner: null, combination: [] };
+        }
+        
+        // Memeriksa apakah papan penuh
+        function isBoardFull() {
+            return board.every(cell => cell !== '');
+        }
+        
+        // Memperbarui skor
+        function updateScores() {
+            scoreXElement.textContent = scores['X'];
+            scoreOElement.textContent = scores['O'];
+            scoreDrawElement.textContent = scores['draw'];
+        }
+        
+        // Mereset permainan
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            moveHistory = [];
+            historyIndex = -1;
+            moveCount = 0;
+            hintRemaining = 3 + Math.floor(levelSystem.level / 3); // More hints at higher levels
+            hintActive = false;
+            
+            // Reset achievement stats for this game
+            achievements.resetGameStats();
+            
+            // Hapus kelas dari sel
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.className = 'cell';
+                cell.textContent = '';
+            });
+            
+            updatePlayerTurn();
+            updateGameStatus("Permainan dimulai! Giliran X.");
+            updateHistoryInfo();
+        }
+        
+        // Mereset skor
+        function resetScores() {
+            scores = {
+                'X': 0,
+                'O': 0,
+                'draw': 0
+            };
+            updateScores();
+        }
+        
+        // Mengubah mode permainan
+        function changeGameMode(mode) {
+            gameMode = mode;
+            
+            // Update tampilan tombol mode
+            if (mode === 'pvp') {
+                pvpModeBtn.classList.add('active');
+                aiModeBtn.classList.remove('active');
+                aiDifficultyElement.classList.remove('active');
+                updateGameStatus("Mode Dua Pemain. Giliran X.");
+            } else {
+                pvpModeBtn.classList.remove('active');
+                aiModeBtn.classList.add('active');
+                aiDifficultyElement.classList.add('active');
+                updateGameStatus(`Mode vs AI (${aiDifficulty === 'easy' ? 'Mudah' : aiDifficulty === 'medium' ? 'Sedang' : 'Sulit'}). Giliran X.`);
+            }
+            
+            resetGame();
+        }
+        
+        // Mengubah tingkat kesulitan AI (manual override)
+        function changeAIDifficulty(difficulty) {
+            aiDifficulty = difficulty;
+            
+            // Update tampilan tombol difficulty
+            difficultyButtons.forEach(btn => {
+                if (btn.dataset.difficulty === difficulty) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Update display
+            document.getElementById('aiDifficultyDisplay').textContent = 
+                difficulty === "easy" ? "Mudah" : 
+                difficulty === "medium" ? "Sedang" : "Sulit";
+            
+            if (gameMode === 'ai') {
+                updateGameStatus(`AI diatur ke ${difficulty === 'easy' ? 'Mudah' : difficulty === 'medium' ? 'Sedang' : 'Sulit'}. Giliran ${currentPlayer}.`);
+            }
+        }
+        
+        // Event Listeners
+        pvpModeBtn.addEventListener('click', () => changeGameMode('pvp'));
+        aiModeBtn.addEventListener('click', () => changeGameMode('ai'));
+        restartBtn.addEventListener('click', resetGame);
+        resetScoreBtn.addEventListener('click', resetScores);
+        hintBtn.addEventListener('click', showHint);
+        undoBtn.addEventListener('click', undoMove);
+        redoBtn.addEventListener('click', redoMove);
+        
+        difficultyButtons.forEach(btn => {
+            btn.addEventListener('click', () => changeAIDifficulty(btn.dataset.difficulty));
+        });
+        
+        // Close level up animation
+        window.closeLevelUp = levelSystem.closeLevelUp.bind(levelSystem);
+        
+        // Tambahkan keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+Z atau Cmd+Z untuk undo
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                if (!undoBtn.disabled) undoMove();
+            }
+            
+            // Ctrl+Y atau Ctrl+Shift+Z atau Cmd+Shift+Z untuk redo
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+                e.preventDefault();
+                if (!redoBtn.disabled) redoMove();
+            }
+            
+            // H untuk hint
+            if (e.key === 'h' || e.key === 'H') {
+                e.preventDefault();
+                if (!hintBtn.disabled) showHint();
+            }
+            
+            // R untuk restart
+            if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                resetGame();
+            }
+            
+            // L untuk reset level (debug)
+            if (e.key === 'l' && e.ctrlKey) {
+                e.preventDefault();
+                levelSystem.reset();
+                achievements.reset();
+                resetGame();
+                alert("Level dan achievement telah direset!");
+            }
+        });
+        
+        // Inisialisasi semua sistem
+        function initializeGame() {
+            // Inisialisasi sistem
+            levelSystem.init();
+            achievements.init();
+            
+            // Inisialisasi game
+            initializeBoard();
+            updateScores();
+            
+            // Set AI difficulty based on level
+            levelSystem.updateAIDifficulty();
+            
+            // Update hint count based on level
+            hintRemaining = 3 + Math.floor(levelSystem.level / 3);
+            updateHistoryInfo();
+            
+            // Simpan state awal ke history
+            saveToHistory();
+            
+            console.log('Tic Tac Toe dengan Sistem Level & Achievement siap dimainkan!');
+            console.log('Level:', levelSystem.level, 'XP:', levelSystem.xp);
+            console.log('Shortcuts: Ctrl+Z (Undo), Ctrl+Y (Redo), H (Hint), R (Restart)');
+        }
+        
+        // Inisialisasi game
+        initializeGame();
+        
+        // Tambahkan event untuk touch devices
+        document.addEventListener('touchstart', function() {}, {passive: true});
+    </script>
+</body>
+</html>
